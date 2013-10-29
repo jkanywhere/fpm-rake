@@ -1,6 +1,20 @@
 # FPM::Rake
 
-TODO: Write a gem description
+[FPM](https://github.com/jordansissel/fpm) is a great tool to build and convert
+between a variety of package formats.
+
+[Rake](http://rake.rubyforge.org/) is a great tool to automate Ruby build and
+release tasks.
+
+`FPM::Rake` provides a Rake task for converting a gem into an RPM package using
+fpm.
+
+Currently only RPM is supported. Please consider implementing and submitting
+tasks for other package formats supported by fpm.
+
+The RPM configuration is currently very specify to my `ruby1.9` setup, I
+would appreciate input on how to expose fpm's many configuration options to
+users of the Rake task.
 
 ## Installation
 
@@ -18,7 +32,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In your `Rakefile` add
+
+    require "fpm/rake_tasks"
+
+Then run
+
+    rake rpm:build
 
 ## Contributing
 
