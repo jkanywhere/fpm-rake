@@ -1,4 +1,4 @@
-# Fpm::Rake
+# FPM::Rake
 
 TODO: Write a gem description
 
