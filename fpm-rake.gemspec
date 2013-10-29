@@ -5,11 +5,18 @@ require 'fpm/rake/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "fpm-rake"
-  spec.version       = Fpm::Rake::VERSION
+  spec.version       = FPM::Rake::VERSION
   spec.authors       = ["Josh Kline"]
   spec.email         = ["github.com@track.jonfram.net"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{
+    Intalls a Rake task that uses Effing Package Manager (fpm)
+    to generate some other package format from your gem.
+
+    Assumes you already have a Rake task to build your gem.
+
+    Currently supports only Red Har Package (RPM) format.
+  }
+  spec.summary       = %q{Rake tasks for building RPM packages with fpm}
   spec.homepage      = ""
   spec.license       = "MIT"
 
