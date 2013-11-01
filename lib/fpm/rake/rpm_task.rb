@@ -78,6 +78,8 @@ module FPM; module Rake
       # Otherwise the required attributes have no value at all.
       rpm.attributes = FPM::Package::RPM.new.attributes.merge(rpm.attributes)
 
+      rpm.dependencies = %w( ruby19 rubygems19 )
+
       rpm.output(File.join(package_directory, rpm.to_s))
     end
 
