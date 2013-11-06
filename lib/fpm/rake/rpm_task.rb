@@ -37,7 +37,12 @@ module FPM; module Rake
       namespace :rpm do
         desc "Build #{built_rpm_filename} into the #{package_directory} directory."
         task 'build' do
-          build_rpm
+          build_self
+        end
+
+        desc "Build an rpm for each dependency of #{name} into the #{package_directory} directory."
+        task 'dependencies' do
+          build_dependencies
         end
 
         #desc "Build #{built_rpm_filename} and install into system."
@@ -58,36 +63,18 @@ module FPM; module Rake
       self.class.instance = self
     end
 
-    def build_rpm
-      gem = FPM::Package::Gem.new
-
-      gem.attributes.merge!({
-        :gem_gem => 'gem1.9',
-        :gem_env_shebang? => false,
-        :gem_package_name_prefix => package_name_prefix,
-        :gem_fix_name? => true,
-        :gem_bin_path => '/usr/bin',
-        :prefix => '/usr/share/gem1.9',
-      })
-
-      if !File.exists?(built_gem_path)
-        # Maybe I should add a task dependency, but how will I know what the
-        # user calls their build task?
-        raise "Cannot find #{built_gem_path}. Build the gem first."
+    def build_dependencies
+      # How do I even known that bundler is installed and configured by
+      # whoever is using fpm-rake? Just because it is my development
+      # dependency doesn't mean it is everyone's.
+      sh "bundle package"
+      Dir.glob("vendor/cache/*.gem").each do |gem|
+        rpm_from_gem(gem)
       end
+    end
 
-      gem.input(built_gem_path)
-
-      rpm = gem.convert(FPM::Package::RPM)
-      # Aquire default attributes of RPM package. This works around a bug in fpm.
-      # See https://github.com/jordansissel/fpm/pull/538
-      # Otherwise the required attributes have no value at all.
-      rpm.attributes = FPM::Package::RPM.new.attributes.merge(rpm.attributes)
-
-      # Also depend on the basic packages required by every Ruby1.9 Gem.
-      rpm.dependencies += %w( ruby19 rubygems19 )
-
-      rpm.output(File.join(package_directory, rpm.to_s))
+    def build_self
+      rpm_from_gem(built_gem_path)
     end
 
     def built_gem_path
@@ -101,6 +88,10 @@ module FPM; module Rake
       "#{package_name_prefix}-#{name}-#{version}.rpm"
     end
 
+    def name
+      gemspec.name
+    end
+
     def package_directory
       "pkg"
     end
@@ -110,8 +101,41 @@ module FPM; module Rake
       'rubygems19'
     end
 
-    def name
-      gemspec.name
+    def rpm_from_gem(gem_path)
+      gem = FPM::Package::Gem.new
+
+      gem.attributes.merge!({
+        :gem_gem => 'gem1.9',
+        :gem_env_shebang? => false,
+        :gem_package_name_prefix => package_name_prefix,
+        :gem_fix_name? => true,
+        :gem_bin_path => '/usr/bin',
+        :prefix => '/usr/share/gem1.9',
+      })
+
+      if !File.exists?(gem_path)
+        # Maybe I should add a task dependency, but how will I know what the
+        # user calls their build task?
+        raise "Cannot find #{gem_path}. Build the gem first."
+      end
+
+      gem.input(gem_path)
+
+      rpm = gem.convert(FPM::Package::RPM)
+      # Aquire default attributes of RPM package. This works around a bug in fpm.
+      # See https://github.com/jordansissel/fpm/pull/538
+      # Otherwise the required attributes have no value at all.
+      rpm.attributes = FPM::Package::RPM.new.attributes.merge(rpm.attributes)
+
+      # Also depend on the basic packages required by every Ruby1.9 Gem.
+      rpm.dependencies += %w( ruby19 rubygems19 )
+
+      rpm_path = File.join(package_directory, rpm.to_s)
+
+      $stdout.sync = true
+      $stdout.puts "Converting #{gem_path} to #{rpm_path}"
+
+      rpm.output(rpm_path)
     end
 
     def version

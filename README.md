@@ -16,6 +16,8 @@ The RPM configuration is currently very specify to my `ruby1.9` setup, I
 would appreciate input on how to expose fpm's many configuration options to
 users of the Rake task.
 
+No relation to [curzonj's Fpm::Rake](https://github.com/curzonj/fpm-rake/).
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -36,9 +38,13 @@ In your `Rakefile` add
 
     require "fpm/rake_tasks"
 
-Then run
+To package your gem itself in RPM format run
 
     rake rpm:build
+
+To package each of your gem's dependencies into RPM format run
+
+    rake rpm:dependencies
 
 ## Contributing
 
@@ -47,3 +53,6 @@ Then run
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+Please send comments and feedback. Does this `FPM::Rake` fit into your workflow?
+
