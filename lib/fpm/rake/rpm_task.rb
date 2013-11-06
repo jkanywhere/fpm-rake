@@ -35,17 +35,17 @@ module FPM; module Rake
       built_gem_path = nil
 
       namespace :rpm do
-        desc "Build #{built_rpm_path} into the #{package_directory} directory."
+        desc "Build #{built_rpm_filename} into the #{package_directory} directory."
         task 'build' do
           build_rpm
         end
 
-        #desc "Build #{built_rpm_path} and install into system."
+        #desc "Build #{built_rpm_filename} and install into system."
         #task 'install' => 'build' do
         #  install_gem(built_gem_path)
         #end
 
-        #desc "Create tag #{version_tag} and build and push #{built_rpm_path} to Artifactory (or mrepo?)"
+        #desc "Create tag #{version_tag} and build and push #{built_rpm_filename} to Artifactory (or mrepo?)"
         #task 'release' => 'build' do
         #  release_gem(built_gem_path)
         #end
@@ -70,7 +70,13 @@ module FPM; module Rake
         :prefix => '/usr/share/gem1.9',
       })
 
-      gem.input(File.join(package_directory, built_gem_path))
+      if !File.exists?(built_gem_path)
+        # Maybe I should add a task dependency, but how will I know what the
+        # user calls their build task?
+        raise "Cannot find #{built_gem_path}. Build the gem first."
+      end
+
+      gem.input(built_gem_path)
 
       rpm = gem.convert(FPM::Package::RPM)
       # Aquire default attributes of RPM package. This works around a bug in fpm.
@@ -85,10 +91,12 @@ module FPM; module Rake
 
     def built_gem_path
       # Used by bundler/gem_tasks
-      "#{name}-#{version}.gem"
+      File.join(package_directory, "#{name}-#{version}.gem")
     end
 
-    def built_rpm_path
+    def built_rpm_filename
+      # I don't like having to compute this but I don't know how to get FPM to
+      # tell me without doing the conversion.
       "#{package_name_prefix}-#{name}-#{version}.rpm"
     end
 
