@@ -46,6 +46,10 @@ To package each of your gem's dependencies into RPM format run
 
     rake rpm:dependencies
 
+To remove all .rpm files from the pkg directory run
+
+    rake rpm:clean
+
 ## Contributing
 
 1. Fork it

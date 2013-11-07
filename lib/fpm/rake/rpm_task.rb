@@ -40,6 +40,16 @@ module FPM; module Rake
           build_self
         end
 
+        desc "Remove rpm files from #{package_directory} directory."
+        task 'clean' do
+          if package_directory.empty?
+            raise "Unwilling to remove rpm files without a package directory."
+          end
+          Dir.glob("#{package_directory}/*.rpm").each do |rpm|
+            rm rpm # also prints name of file being removed
+          end
+        end
+
         desc "Build an rpm for each dependency of #{name} into the #{package_directory} directory."
         task 'dependencies' do
           build_dependencies
