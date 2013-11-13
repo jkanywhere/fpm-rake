@@ -108,7 +108,7 @@ module FPM; module Rake
 
     def package_name_prefix
       # Follow the CentOS/Amazon Linux RPM package naming convention.
-      'rubygems19'
+      'rubygem19'
     end
 
     def rpm_from_gem(gem_path)
