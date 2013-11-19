@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
 
     Assumes you already have a Rake task to build your gem.
 
-    Currently supports only Red Har Package (RPM) format.
+    Currently supports only Red Hat Package (RPM) format.
   }
   spec.summary       = %q{Rake tasks for building RPM packages with fpm}
   spec.homepage      = ""
