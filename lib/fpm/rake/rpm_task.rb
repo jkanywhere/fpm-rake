@@ -120,7 +120,7 @@ module FPM; module Rake
         :gem_package_name_prefix => package_name_prefix,
         :gem_fix_name? => true,
         :gem_bin_path => '/usr/bin',
-        :prefix => '/usr/share/gem1.9',
+        :prefix => '/usr/share/gems1.9',
       })
 
       if !File.exists?(gem_path)
